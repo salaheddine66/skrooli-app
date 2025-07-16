@@ -10,7 +10,7 @@ export default function WelcomeBanner() {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        setEmail(user.email)
+        setEmail(user.email ?? null)
       }
     }
 
