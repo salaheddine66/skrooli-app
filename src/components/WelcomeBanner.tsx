@@ -1,25 +1,27 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { useAuth } from '@/context/AuthContext'
+import Link from 'next/link'
 
 export default function WelcomeBanner() {
-  const [email, setEmail] = useState<string | null>(null)
+  const { user, loading } = useAuth()
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setEmail(user.email ?? null)
-      }
-    }
-
-    fetchUser()
-  }, [])
+  if (loading) return null
 
   return (
-    <div className="p-4 bg-blue-100 rounded mb-4">
-      {email ? `👋 Welcome, ${email}` : '🕵️ Not logged in'}
+    <div className="bg-gray-100 p-4 text-center border-b border-gray-300">
+      {user ? (
+        <div className="flex justify-between items-center max-w-2xl mx-auto">
+          <p className="text-sm">👋 Welcome, {user.email}</p>
+          <form action="/logout" method="post">
+            <button className="text-blue-600 hover:underline text-sm">Logout</button>
+          </form>
+        </div>
+      ) : (
+        <p className="text-sm">
+          🕵️ Not logged in – <Link href="/login" className="underline">Log in</Link>
+        </p>
+      )}
     </div>
   )
 }
